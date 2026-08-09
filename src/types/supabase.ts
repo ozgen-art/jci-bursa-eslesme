@@ -104,6 +104,10 @@ export interface Database {
           similarity: number;
         }[];
       };
+      generate_registry_no: {
+        Args: Record<string, never>;
+        Returns: string;
+      };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;

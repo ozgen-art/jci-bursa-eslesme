@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "JCI Bursa Eşleştirme Sistemi",
-  description: "Üyeleri sicildeki en uygun kişilerle otomatik eşleştiren sistem",
+  title: "JCI Bursa Networking Eşleşmesi",
+  description: "Üyeleri sicildeki en uygun kişilerle otomatik eşleştiren networking sistemi",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -18,8 +18,9 @@ const AI_REFINEMENT_ENABLED = process.env.ENABLE_AI_REFINEMENT === "true";
 
 export const runtime = "nodejs";
 
+// registry_no formda istenmiyor; backend'de generate_registry_no() ile
+// otomatik üretiliyor (bkz. supabase/migrations/0004_registry_no_sequence.sql).
 const memberSchema = z.object({
-  registry_no: z.string().min(1, "Sicil numarası zorunlu"),
   name: z.string().min(1, "İsim zorunlu"),
   sector: z.string().min(1, "Sektör zorunlu"),
   expertise: z.string().optional().default(""),
@@ -44,10 +45,21 @@ export async function POST(req: NextRequest) {
 
   const supabase = getSupabaseAdmin();
 
+  // Sicil numarasını backend üretir (sıralı, JCI-BUR-001 formatında).
+  const { data: registryNo, error: registryError } = await supabase.rpc(
+    "generate_registry_no"
+  );
+  if (registryError || !registryNo) {
+    return NextResponse.json(
+      { error: `Sicil numarası üretilemedi: ${registryError?.message ?? "bilinmeyen hata"}` },
+      { status: 500 }
+    );
+  }
+
   // 1) Kayıt: members tablosuna INSERT
   const { data: member, error: insertError } = await supabase
     .from("members")
-    .insert(input)
+    .insert({ ...input, registry_no: registryNo })
     .select()
     .single();
 

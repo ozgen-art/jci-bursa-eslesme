@@ -12,7 +12,6 @@ type MatchResult = {
 };
 
 const initialForm = {
-  registry_no: "",
   name: "",
   sector: "",
   expertise: "",
@@ -28,6 +27,7 @@ export default function BasvuruPage() {
   const [error, setError] = useState<string | null>(null);
   const [matches, setMatches] = useState<MatchResult[] | null>(null);
   const [memberId, setMemberId] = useState<string | null>(null);
+  const [registryNo, setRegistryNo] = useState<string | null>(null);
 
   function update<K extends keyof typeof initialForm>(key: K, value: string) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -52,6 +52,7 @@ export default function BasvuruPage() {
       }
 
       setMemberId(data.member.id);
+      setRegistryNo(data.member.registry_no);
       setMatches(data.matches ?? []);
       if (data.warning) setError(data.warning);
     } catch (err) {
@@ -67,6 +68,7 @@ export default function BasvuruPage() {
         <h1 className="text-2xl font-semibold">Kayıt tamamlandı 🎉</h1>
         <p className="mt-2 text-sm text-neutral-500">
           Sicildeki en uygun {matches.length} eşleşme bulundu.
+          {registryNo && <> Sicil numaran: <span className="font-medium">{registryNo}</span>.</>}
         </p>
         {error && <p className="mt-4 text-sm text-amber-600">{error}</p>}
 
@@ -113,13 +115,12 @@ export default function BasvuruPage() {
 
   return (
     <main className="mx-auto max-w-xl px-6 py-16">
-      <h1 className="text-2xl font-semibold">JCI Bursa Üye Başvurusu</h1>
+      <h1 className="text-2xl font-semibold">JCI Bursa Networking Eşleşmesi</h1>
       <p className="mt-2 text-sm text-neutral-500">
         Bilgilerin, sicildeki en uygun kişilerle seni eşleştirmek için kullanılır.
       </p>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-4">
-        <Field label="Sicil Numarası" placeholder="JCI-BUR-042" value={form.registry_no} onChange={(v) => update("registry_no", v)} required />
         <Field label="Ad Soyad" value={form.name} onChange={(v) => update("name", v)} required />
         <Field label="Sektör" placeholder="Yazılım, İnşaat, Finans..." value={form.sector} onChange={(v) => update("sector", v)} required />
         <Field label="Uzmanlık Alanın" value={form.expertise} onChange={(v) => update("expertise", v)} textarea />
